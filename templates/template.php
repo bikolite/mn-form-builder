@@ -13,7 +13,6 @@ $form_data_json = json_encode($form_data, JSON_PRETTY_PRINT);
     <?php
     // Decode the JSON-encoded form data
     $decoded_data = json_decode($row->form_data, true);
-
     ?>
     <form>
         <div class="row">
@@ -22,34 +21,54 @@ $form_data_json = json_encode($form_data, JSON_PRETTY_PRINT);
             if ($decoded_data !== null) {
                 foreach ($decoded_data as $field) {
                     // print_r($field);
-                    $grid = $field['grid'];
-                    $class = ($grid === '1' || $grid === '') ? 'col-md-12' : 'col-md-6';
                     if (isset($field['type']) && $field['type'] === 'text') {
                     ?>
-                        <div class="<?php echo  $class; ?>">
-                            <label for="exampleFormControlInput1"><?php echo $field['label_name'] ?></label>
-                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlInput1" placeholder="Enter Your <?php echo $field['label_name'] ?>">
+                        <div class="<?php echo  $field['class']; ?>">
+                            <label for="exampleFormControlInput1"><?php echo $field['label'] ?></label>
+                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlInput1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
                         </div>
                     <?php
                     }elseif(isset($field['type']) && $field['type'] === 'date'){
                         ?>
-                            <div class="<?php echo  $class; ?>">
-                                <label for="exampleFormControlInput1"><?php echo $field['label_name'] ?></label>
-                                <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlInput1" placeholder="Enter Your <?php echo $field['label_name'] ?>">
+                            <div class="<?php echo  $field['class']; ?>">
+                                <label for="exampleFormControlInput1"><?php echo $field['label'] ?></label>
+                                <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlInput1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
                             </div>
                         <?php
                     }elseif(isset($field['type']) && $field['type'] === 'textarea'){
                         ?>
-                            <div class="<?php echo  $class; ?>">
-                                <label for="exampleFormControlInput1"><?php echo $field['label_name'] ?></label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="1"></textarea>
+                            <div class="<?php echo  $field['class']; ?>">
+                                <label for="exampleFormControlInput1"><?php echo $field['label'] ?></label>
+                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="1">
+                                <?php echo $field['placeholder'] ?>
+                                </textarea>
                             </div>
                         <?php
-                    }elseif(isset($field['type']) && $field['type'] === 'file'){
+                    }elseif(isset($field['type']) && $field['type'] === 'email'){
                         ?>
-                        <div class="<?php echo  $class; ?>">
-                            <label for="exampleFormControlFile1"><?php echo $field['label_name'] ?></label><br>
-                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                        <div class="<?php echo  $field['class']; ?>">
+                            <label for="exampleFormControlFile1"><?php echo $field['label'] ?></label><br>
+                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlFile1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
+                        </div>
+                        <?php
+                    }elseif(isset($field['type']) && $field['type'] === 'number'){
+                        ?>
+                        <div class="<?php echo  $field['class']; ?>">
+                            <label for="exampleFormControlFile1"><?php echo $field['label'] ?></label><br>
+                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlFile1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
+                        </div>
+                        <?php
+                    }elseif(isset($field['type']) && $field['type'] === 'password'){
+                        ?>
+                        <div class="<?php echo  $field['class']; ?>">
+                            <label for="exampleFormControlFile1"><?php echo $field['label'] ?></label><br>
+                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlFile1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
+                        </div>
+                        <?php
+                    }elseif(isset($field['type']) && $field['type'] === 'button'){
+                        ?>
+                        <div class="<?php echo  $field['class']; ?>">
+                            <button style="margin-top: 10px;" class="<?php echo  $field['label']; ?> <?php echo  $field['class']; ?>"><?php echo  $field['placeholder']; ?></button>
                         </div>
                         <?php
                     }
@@ -59,9 +78,6 @@ $form_data_json = json_encode($form_data, JSON_PRETTY_PRINT);
             }
 
             ?>
-            
-            <input type="hidden" name="submit_custom_form" value="1">
-            <button type="submit"style="margin-top: 20px" name="submit_custom_form" class="btn btn-primary">Submit</button>
         </div>
     </form>
 <?php endforeach; ?>

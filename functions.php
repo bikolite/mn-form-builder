@@ -47,24 +47,30 @@ function handle_custom_form_submission()
         global $wpdb;
         $table_name = $wpdb->prefix . 'fields';
 
-        $label_names = $_POST['label'];
-        $contents = $_POST['content'];
-        $types = $_POST['type'];
-        $grid = $_POST['grid'];
+        $content = $_POST['content'];
+        $class = $_POST['class'];
+        $placeholder = $_POST['placeholder'];
+        $label = $_POST['label'];
+        $required = $_POST['required'];
+        $type = $_POST['type'];
 
         $data = array();
         // Loop through the arrays to add each set of data to the main array
-        for ($i = 0; $i < count($label_names); $i++) {
-            $name = sanitize_text_field($label_names[$i]);
-            $content = sanitize_text_field($contents[$i]);
-            $type = sanitize_text_field($types[$i]);
-            $selected_grid = sanitize_text_field($grid[$i]);
+        for ($i = 0; $i < count($type); $i++) {
+            $post_content = sanitize_text_field($content[$i]);
+            $post_class = sanitize_text_field($class[$i]);
+            $post_placeholder = sanitize_text_field($placeholder[$i]);
+            $post_label = sanitize_text_field($label[$i]);
+            $post_required = sanitize_text_field($required[$i]);
+            $post_type = sanitize_text_field($type[$i]);
 
             $data[] = array(
-                'label_name' => $name,
-                'content' => $content,
-                'type' => $type,
-                'grid' => $selected_grid,
+                'content' => $post_content,
+                'class' => $post_class,
+                'placeholder' => $post_placeholder,
+                'label' => $post_label,
+                'required' => $post_required,
+                'type' => $post_type,
             );
         }
 

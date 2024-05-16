@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name:       MN Form Builder
+ * Plugin Name:       Form Builder
  * Plugin URI:        https://wordpress.org/plugins/mn-form-builder/
- * Description:       MN Form Builder: Effortlessly create and manage custom forms for your WordPress site with ease and flexibility
+ * Description:       Form Builder: Effortlessly create and manage custom forms for your WordPress site with ease and flexibility
  * Version:           1.0.0
  * Requires at least: 5.2
  * Requires PHP:      7.4
@@ -26,7 +26,7 @@ define('MNFB_PLUGIN_URL', trailingslashit(plugin_dir_url(__FILE__)));
 
 function mnpb_load_stylesheet()
 {
-    wp_enqueue_style('mnpb_bootstrap_style', 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css');
+    wp_enqueue_style('mnpb_bootstrap_style', 'https://unpkg.com/bootswatch@3.3.7/yeti/bootstrap.min.css');
 }
 add_action('wp_enqueue_scripts', 'mnpb_load_stylesheet');
 
@@ -50,12 +50,28 @@ if (is_admin()) {
 }
 
 
-function mnfb_form_builder_shortcode()
+function form_builder_shortcode($atts)
 {
-    ob_start();
-?>
-    <?php include(MNFB_PLUGIN_PATH . 'templates/template.php'); ?>
-<?php
-    return ob_get_clean();
+    $atts = shortcode_atts(array(
+        'id' => ''
+    ), $atts);
+    if (isset($atts['id']) && !empty($atts['id'])) {
+        $post_id = intval($atts['id']);
+        $post = get_post($post_id);
+
+        // Check if post exists
+        if ($post) {
+            // Return post content
+            ob_start();
+            ?>
+                <?php include(MNFB_PLUGIN_PATH . 'templates/template.php'); ?>
+            <?php
+                return ob_get_clean();
+        } else {
+            return 'Post not found.';
+        }
+    } else {
+        return 'Please provide a post ID.';
+    }
 }
-add_shortcode('mnfb_form_builder', 'mnfb_form_builder_shortcode');
+add_shortcode('form_builder', 'form_builder_shortcode');

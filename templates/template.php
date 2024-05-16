@@ -1,83 +1,92 @@
 <?php
-global $wpdb;
-$table_name = $wpdb->prefix . 'fields';
-$form_data = $wpdb->get_results("SELECT * FROM $table_name");
+// echo $content = $post->ID;
+$content = $post->post_content;
+$json_data = json_decode($content);
 
-// Encode form_data into JSON format
-$form_data_json = json_encode($form_data, JSON_PRETTY_PRINT);
-?>
-
-<!-- JSON output -->
-<div id="json-output" style="display: none;"><?php echo htmlspecialchars($form_data_json); ?></div>
-<?php foreach ($form_data as $row) : ?>
-    <?php
-    // Decode the JSON-encoded form data
-    $decoded_data = json_decode($row->form_data, true);
-    ?>
-    <form>
-        <div class="row">
-            <?php
-
-            if ($decoded_data !== null) {
-                foreach ($decoded_data as $field) {
-                    // print_r($field);
-                    if (isset($field['type']) && $field['type'] === 'text') {
-                    ?>
-                        <div class="<?php echo  $field['class']; ?>">
-                            <label for="exampleFormControlInput1"><?php echo $field['label'] ?></label>
-                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlInput1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
-                        </div>
-                    <?php
-                    }elseif(isset($field['type']) && $field['type'] === 'date'){
-                        ?>
-                            <div class="<?php echo  $field['class']; ?>">
-                                <label for="exampleFormControlInput1"><?php echo $field['label'] ?></label>
-                                <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlInput1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
-                            </div>
-                        <?php
-                    }elseif(isset($field['type']) && $field['type'] === 'textarea'){
-                        ?>
-                            <div class="<?php echo  $field['class']; ?>">
-                                <label for="exampleFormControlInput1"><?php echo $field['label'] ?></label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="1">
-                                <?php echo $field['placeholder'] ?>
-                                </textarea>
-                            </div>
-                        <?php
-                    }elseif(isset($field['type']) && $field['type'] === 'email'){
-                        ?>
-                        <div class="<?php echo  $field['class']; ?>">
-                            <label for="exampleFormControlFile1"><?php echo $field['label'] ?></label><br>
-                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlFile1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
-                        </div>
-                        <?php
-                    }elseif(isset($field['type']) && $field['type'] === 'number'){
-                        ?>
-                        <div class="<?php echo  $field['class']; ?>">
-                            <label for="exampleFormControlFile1"><?php echo $field['label'] ?></label><br>
-                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlFile1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
-                        </div>
-                        <?php
-                    }elseif(isset($field['type']) && $field['type'] === 'password'){
-                        ?>
-                        <div class="<?php echo  $field['class']; ?>">
-                            <label for="exampleFormControlFile1"><?php echo $field['label'] ?></label><br>
-                            <input type="<?php echo $field['type'] ?>" class="form-control" id="exampleFormControlFile1" placeholder="<?php echo $field['placeholder'] ?>" <?php echo $field['required'] ?>>
-                        </div>
-                        <?php
-                    }elseif(isset($field['type']) && $field['type'] === 'button'){
-                        ?>
-                        <div class="<?php echo  $field['class']; ?>">
-                            <button style="margin-top: 10px;" class="<?php echo  $field['label']; ?> <?php echo  $field['class']; ?>"><?php echo  $field['placeholder']; ?></button>
-                        </div>
-                        <?php
-                    }
+if ($json_data === null && json_last_error() !== JSON_ERROR_NONE) {
+    echo "<p>Error decoding JSON data</p>";
+} else {
+    
+    ?> <div class="row"> <?php
+    foreach ($json_data as $item) {
+        if (isset($item->type) && $item->type == 'textarea') {
+        ?>
+            <div class="<?php
+                if(isset($item->className)){
+                    echo $item->className;
                 }
-            } else {
-                echo "<p>Error decoding JSON data</p>";
-            }
-
-            ?>
+            ?>" style="padding: 0; margin-bottom: 5px">
+                <label for=""><?= $item->label ?></label>
+                <textarea class="form-control" rows="<?= $item->rows ?>" id="<?= $item->type ?>"></textarea>
+            </div>
+        <?php
+        } elseif (isset($item->type) && $item->type == 'textfield') {
+        ?>
+            <div class="<?php
+                if(isset($item->className)){
+                    echo $item->className;
+                }
+            ?>" style="padding: 0; margin-bottom: 5px">
+                <label for=""><?= $item->label ?></label>
+                <input class="form-control" type="<?= $item->key ?>" id="<?= $item->key ?>" placeholder="<?= $item->placeholder ?>">
+            </div>
+        <?php
+        }elseif (isset($item->type) && $item->type == 'number') {
+        ?>
+            <div class="<?php
+                if(isset($item->className)){
+                    echo $item->className;
+                }
+            ?>" style="padding: 0; margin-bottom: 5px">
+                <label for=""><?= $item->label ?></label>
+                <input class="form-control" type="<?= $item->key ?>" id="<?= $item->type ?>" placeholder="<?= $item->placeholder ?>">
+            </div>
+        <?php
+        } elseif (isset($item->type) && $item->type == 'password') {
+        ?>
+            <div class="<?php
+                if(isset($item->className)){
+                    echo $item->className;
+                }
+            ?>" style="padding: 0; margin-bottom: 5px">
+                <label for=""><?= $item->label ?></label>
+                <input class="form-control" type="<?= $item->key ?>" id="<?= $item->type ?>" placeholder="<?= $item->placeholder ?>">
+            </div>
+        <?php
+        } elseif (isset($item->type) && $item->type == 'checkbox') {
+        ?>
+        <div class="form-control" style="margin-bottom: 5px">
+            <input type="<?= $item->type ?>" id="<?= $item->type ?>">
+            <label class="form-check-label" for="flexSwitchCheckDefault"><?= $item->label ?></label>
         </div>
-    </form>
-<?php endforeach; ?>
+        <?php
+        }
+        elseif (isset($item->type) && $item->type == 'select') {
+            ?>
+            <div class="<?php
+                if(isset($item->className)){
+                    echo $item->className;
+                }
+            ?>
+            " style="padding: 0; margin-bottom: 5px">
+            <select class="form-control" id="floatingSelect" aria-label="Floating label select example">
+                <option selected><?= $item->label ?></option>
+                <?php foreach ($item->values as $val) { ?>
+                <option value="<?= $val->value ?>"><?= $val->label ?></option>
+                <?php } ?>
+
+            </select>
+            </div>
+            <?php
+            } elseif (isset($item->type) && $item->type == 'button') {
+        ?>
+        <div class="form">
+            <button  style="margin-top: 10px;" type="<?= $item->type ?>"class="btn btn-primary col-md-12">Submit</button>
+        </div>
+        <?php
+        }
+    }
+    
+    ?> </div> <?php
+}
+?>

@@ -13,11 +13,12 @@ add_action( 'admin_enqueue_scripts', 'mnfb_load_admin_stylesheet' );
 
 
 function mnfb_load_admin_scripts() {
-    wp_enqueue_script('mnfb-custom-jquery', plugins_url('assets/js/jquery.min.js', __FILE__), array(), null, true);
-    wp_enqueue_script('mnfb-custom-jquery-ui', plugins_url('assets/js/jquery-ui.min.js', __FILE__), array(), null, true);
-    wp_enqueue_script('mnfb-custom-tether', plugins_url('assets/js/tether.min.js', __FILE__), array(), null, true);
-    wp_enqueue_script('mnfb-custom-bootstrap', plugins_url('assets/js/bootstrap.min.jss', __FILE__), array(), null, true);
-    wp_enqueue_script('mnfb-custom-script', plugins_url('assets/js/app.js', __FILE__), array(), null, true);
+    wp_enqueue_script('mnfb-custom-ckeditor', 'https://cdn.ckeditor.com/4.5.11/standard/ckeditor.js', array(), null, true);
+    wp_enqueue_script('mnfb-custom-signature_pad', 'https://unpkg.com/signature_pad@1.5.3/signature_pad.min.js', array(), null, true);
+    wp_enqueue_script('mnfb-custom-FormBuilder-full', 'https://unpkg.com/ng-formio-builder@latest/dist/ngFormBuilder-full.js', array(), null, true);
+    wp_enqueue_script('mnfb-custom-lodash', 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js', array(), null, true);
+    wp_enqueue_script('mnfb-custom-json-explorer', plugins_url('assets/js/angular-json-explorer.min.js', __FILE__), array(), null, true);
+    wp_enqueue_script('mnfb-custom-app', plugins_url('assets/js/app.js', __FILE__), array(), null, true);
 }
 add_action('admin_enqueue_scripts', 'mnfb_load_admin_scripts');
 

@@ -4,8 +4,8 @@ function mnfb_form_builder_menu()
 {
     // Add the main menu page
     add_menu_page(
-        'MN Form Builder',          // Page title
-        'MN Form Builder',          // Menu title
+        'Form Builder',          // Page title
+        'Form Builder',          // Menu title
         'manage_options',           // Capability
         'mnfb-form-builder-menu',   // Menu slug
         'mnfb_form_builder_page',   // Callback function
@@ -39,50 +39,33 @@ function mnfb_all_form_page() {
 }
 
 
-add_action('init', 'handle_custom_form_submission');
-function handle_custom_form_submission()
-{
-    // Check if the form was submitted
-    if (isset($_POST['submit_custom_form'])) {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'fields';
+add_action('wp_ajax_save_custom_form_data', 'save_custom_form_data');
+add_action('wp_ajax_nopriv_save_custom_form_data', 'save_custom_form_data');
 
-        $content = $_POST['content'];
-        $class = $_POST['class'];
-        $placeholder = $_POST['placeholder'];
-        $label = $_POST['label'];
-        $required = $_POST['required'];
-        $type = $_POST['type'];
+function save_custom_form_data() {
+    if (isset($_POST['textarea_content'])) {
+        $json_data = wp_kses_post(wp_unslash($_POST['textarea_content']));
+        $decoded_data = json_decode($json_data, true);
 
-        $data = array();
-        // Loop through the arrays to add each set of data to the main array
-        for ($i = 0; $i < count($type); $i++) {
-            $post_content = sanitize_text_field($content[$i]);
-            $post_class = sanitize_text_field($class[$i]);
-            $post_placeholder = sanitize_text_field($placeholder[$i]);
-            $post_label = sanitize_text_field($label[$i]);
-            $post_required = sanitize_text_field($required[$i]);
-            $post_type = sanitize_text_field($type[$i]);
-
-            $data[] = array(
-                'content' => $post_content,
-                'class' => $post_class,
-                'placeholder' => $post_placeholder,
-                'label' => $post_label,
-                'required' => $post_required,
-                'type' => $post_type,
+        if ($decoded_data !== null) {
+            $post_data = array(
+                'post_title'    => 'Plugin->Form Data',
+                'post_content'  => $json_data,
+                'post_type'     => 'form-post',
+                'post_status'   => 'publish'
             );
-        }
 
-        $data_json = json_encode($data);
-        // Insert data into the database
-        $wpdb->insert(
-            $table_name,
-            array(
-                'form_data' => $data_json,
-            )
-        );
-        wp_redirect(admin_url('admin.php?page=mnfb-all-form-pages'));
-        exit;
+            $post_id = wp_insert_post($post_data);
+
+            if ($post_id) {
+                echo 'success';
+            } else {
+                echo 'error';
+            }
+        } else {
+            echo 'error';
+        }
     }
+
+    wp_die();
 }
